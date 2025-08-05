@@ -1,18 +1,22 @@
 {
     "domains": [
         {
-            "name": "",
-            "sub": [],
+            "name": "MyPrivateSub_Placeholder",
+            "sub": [
+                "https://xxxx.com/your/private/sub/link"
+            ],
             "domain": "",
-            "enable": true,
+            "enable": false,
             "rename": "",
             "include": "",
             "exclude": "",
-            "push_to": [],
+            "push_to": [
+                "MyProxies"
+            ],
             "ignorede": true,
             "liveness": true,
             "rate": 2.5,
-            "count": 2,
+            "count": 1,
             "coupon": "",
             "secure": false,
             "renew": {
@@ -43,7 +47,7 @@
     ],
     "crawl": {
         "enable": true,
-        "exclude": "",
+        "exclude": "过期|停用|维护",
         "threshold": 5,
         "singlelink": true,
         "persist": {
@@ -56,8 +60,21 @@
             "exclude": "",
             "xxxxxxx": ""
         },
-        "telegram": {
+        "airport_discovery": {
             "enable": true,
+            "channel": "jichang_list",
+            "pages": 5,
+            "rigid": true,
+            "chuck": false,
+            "push_to": [
+                "MyProxies"
+            ],
+            "persist": {
+                "domains": "discovered-airports.txt"
+            }
+        },
+        "telegram": {
+            "enable": false,
             "pages": 5,
             "exclude": "",
             "users": {
@@ -81,12 +98,14 @@
         "github": {
             "enable": true,
             "pages": 2,
-            "push_to": [],
+            "push_to": [
+                "MyProxies"
+            ],
             "exclude": "",
             "spams": []
         },
         "twitter": {
-            "enable": true,
+            "enable": false,
             "users": {
                 "username": {
                     "enable": true,
@@ -144,47 +163,56 @@
         ]
     },
     "groups": {
-        "xxx": {
+        "MyProxies": {
             "emoji": true,
             "list": true,
             "targets": {
-                "clash": "xxx-clash",
-                "singbox": "xxx-singbox",
-                "v2ray": "xxx-v2ray"
+                "clash": "MyClashProfile",
+                "singbox": "MySingboxProfile",
+                "v2ray": "MyV2rayProfile"
             },
             "regularize": {
-                "enable": false,
+                "enable": true,
                 "locate": true,
                 "bits": 2
             }
         }
     },
     "storage": {
-        "engine": "xxx",
-        "base": "https://api.xxx.com",
-        "domain": "https://xxx.com",
+        "engine": "gist",
+        "token": "",
+        "base": "https://api.github.com",
+        "domain": "https://gist.github.com",
         "items": {
-            "xxx-clash": {
-                "username": "",
-                "folderid": "",
-                "fileid": ""
+            "MyClashProfile": {
+                "username": "用户名",
+                "gistid": "Gist ID",
+                "filename": "clash.yaml"
             },
-            "xxx-singbox": {
-                "fileid": ""
+            "MySingboxProfile": {
+                "username": "用户名",
+                "gistid": "Gist ID",
+                "filename": "singbox.json"
             },
-            "xxx-v2ray": {
-                "username": "",
-                "fileid": ""
+            "MyV2rayProfile": {
+                "username": "用户名",
+                "gistid": "Gist ID",
+                "filename": "v2ray.txt"
             },
             "crawledsubs": {
-                "username": "",
-                "folderid": "",
-                "fileid": ""
+                "username": "用户名",
+                "gistid": "Gist ID",
+                "filename": "crawled-subs.txt"
             },
             "crawledproxies": {
-                "username": "",
-                "folderid": "",
-                "fileid": ""
+                "username": "用户名",
+                "gistid": "Gist ID",
+                "filename": "crawled-proxies.yaml"
+            },
+            "discovered-airports.txt": {
+                "username": "用户名",
+                "gistid": "Gist ID",
+                "filename": "discovered-airports.txt"
             }
         }
     }

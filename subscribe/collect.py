@@ -386,7 +386,8 @@ def aggregate(args: argparse.Namespace) -> None:
 
     # 如有必要，上传至 Gist
     if gist_id and access_token:
-        files, config = {}, {"gistid": gist_id, "filename": list(records.keys())[0]}
+        # files, config = {}, {"gistid": gist_id, "filename": list(records.keys())[0]}
+        files, config = {}, {"username": username, "gistid": gist_id, "filename": list(records.keys())[0]}
 
         for k, v in records.items():
             if os.path.exists(v) and os.path.isfile(v):

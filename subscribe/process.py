@@ -229,6 +229,56 @@ def load_configs(
             scripts[path] = task_conf
         params["scripts"] = scripts
 
+        # ==================== [新增逻辑] 机场站点发现 ====================
+        airport_discovery_conf = spiders.get("airport_discovery", {})
+        if airport_discovery_conf.pop("enable", False):
+            logger.info("[AirportDiscovery] Starting airport discovery task...")
+
+            # 从配置中获取参数
+            channel = airport_discovery_conf.get("channel", "jichang_list")
+            discover_pages = airport_discovery_conf.get("pages", sys.maxsize)
+            discover_rigid = airport_discovery_conf.get("rigid", True)
+            discover_chuck = airport_discovery_conf.get("chuck", False)
+            discover_push_to = airport_discovery_conf.get("push_to", [])
+            discover_persist = airport_discovery_conf.get("persist", {})
+            
+            # 执行机场发现
+            discovered_airports = crawl.collect_airport(
+                channel=channel,
+                page_num=discover_pages,
+                num_thread=num_threads,
+                rigid=discover_rigid,
+                display=display,
+                chuck=discover_chuck
+            )
+
+            if discovered_airports:
+                logger.info(f"[AirportDiscovery] Discovered {len(discovered_airports)} potential airports.")
+                # 将发现的机场转换为 process.py 的任务格式
+                for domain, airport_params in discovered_airports.items():
+                    new_task = {
+                        "name": crawl.naming_task(url=domain),
+                        "domain": domain,
+                        "coupon": airport_params.get("coupon", ""),
+                        "invite_code": airport_params.get("invite_code", ""),
+                        "api_prefix": airport_params.get("api_prefix", ""),
+                        "push_to": discover_push_to,
+                        "origin": Origin.TEMPORARY.name  # 标记为发现的，以便后续处理
+                    }
+                    tasks.append(new_task)
+                
+                # 持久化发现的域名列表
+                domains_persist_file = discover_persist.get("domains")
+                if domains_persist_file:
+                    domains_file_path = os.path.join(PATH, "data", domains_persist_file)
+                    crawl.save_candidates(candidates=discovered_airports, filepath=domains_file_path, delimiter="@#@#")
+                    logger.info(f"[AirportDiscovery] Discovered airport domains saved to {domains_file_path}")
+
+            else:
+                logger.info("[AirportDiscovery] No new airports were discovered.")
+        # ==================== [新增逻辑结束] ====================
+
+
     def verify(storage: dict, groups: dict) -> bool:
         if not isinstance(storage, dict) or not isinstance(groups, dict):
             return False
@@ -829,3 +879,4 @@ if __name__ == "__main__":
     utils.load_dotenv(args.environment)
 
     aggregate(args=args)
+

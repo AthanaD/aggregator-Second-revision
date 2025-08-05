@@ -3,19 +3,21 @@ version: '3.8'
 services:
   # 核心服务：Aggregator (已整合定时任务功能)
   aggregator:
-    image: devinglaw/aggregator:latest
+    image: devinglaw/aggregator:latest # 您可以继续使用发布的镜像，或使用下面的 build 指令自行构建
+    # build: . # 新增 build 指令，以便使用本地修改后的 Dockerfile 和代码
     container_name: aggregator
     restart: unless-stopped
     working_dir: /aggregator
 
     # 关键：将您的个人配置和输出结果持久化到宿主机
     volumes:
-      # 1. 配置文件 (被 collect.py 和 process.py 读取)
+      # 1. 配置文件 (被 process.py 读取)
       - ./config.aggregator.json:/aggregator/subscribe/config/config.json:ro
       # 2. 数据输出目录 (采集的原始订阅、日志等)
       - ./data:/aggregator/data
       # 3. (可选) 自定义脚本目录
       - ./scripts:/aggregator/subscribe/scripts:ro
+
 
     # 关键：通过 .env 文件安全地传入您的敏感信息
     env_file:
@@ -24,31 +26,31 @@ services:
     # 关键：用 entrypoint 实现启动时运行一次 + 后台定时运行
     entrypoint: >
       sh -c "
-        # 步骤 1: 确保 crond 在后台运行所需的环境已就绪
+        # 步骤 1: 准备 cron 环境
         # devinglaw/aggregator 镜像是基于 debian 的，cron 服务已安装
         echo '[INFO] Preparing cron environment...'
         
         # 步骤 2: 创建定时任务配置文件 (使用 sudo)
-        # 我们将定时任务的输出重定向到 Docker 日志，方便调试
+        echo '[INFO] Creating cron job...'
         # --- 关键改动 1: 使用 sudo 和 sh -c 来创建 root 拥有的文件 ---
-        sudo sh -c 'echo \"# 任务1: 每周一凌晨0点，进行一次全面的订阅采集
-        0 0 * * 1 cd /aggregator && python -u subscribe/collect.py --all --overwrite > /proc/1/fd/1 2>/proc/1/fd/2
+        sudo sh -c 'echo \"# 任务1: 每周一凌晨0点，进行一次全面的订阅采集/机场发现
+        0 0 * * 1 cd /aggregator && python -u subscribe/process.py -s /aggregator/subscribe/config/config.json > /proc/1/fd/1 2>/proc/1/fd/2
 
-        # 任务2: 每2小时，刷新一次已有的订阅链接，获取最新节点
-        0 */2 * * * cd /aggregator && python -u subscribe/collect.py --all --overwrite --refresh > /proc/1/fd/1 2>/proc/1/fd/2
+        # 任务2: 每2小时，刷新并处理所有任务
+        0 */2 * * * cd /aggregator && python -u subscribe/process.py -s /aggregator/subscribe/config/config.json > /proc/1/fd/1 2>/proc/1/fd/2
         \" > /etc/cron.d/aggregator_cron'
 
         # 赋予 cron 任务文件正确的权限 (使用 sudo)
         # --- 关键改动 2: 使用 sudo 来修改 root 拥有的文件权限 ---
         sudo chmod 0644 /etc/cron.d/aggregator_cron
         
-        # 步骤 3: 容器启动时，立即执行一次完整的采集任务 (以 appuser 身份)
+        # 步骤 3: 容器启动时，立即执行一次完整的聚合任务 (以 appuser 身份)
         # 这一步不需要 sudo，以普通用户运行更安全
-        echo '[INFO] Container started. Running initial collection task...'
-        python -u subscribe/collect.py --all --overwrite
-        echo '[INFO] Initial collection task finished.'
+        echo '[INFO] Container started. Running initial aggregation task...'
+        python -u subscribe/process.py -s /aggregator/subscribe/config/config.json
+        echo '[INFO] Initial aggregation task finished.'
         
-        # 步骤 4: 启动 cron 服务，并让它在前台运行以保持容器存活 (使用 sudo)
+        # 步骤 4: 启动 cron 服务，并在前台运行以保持容器存活
         # cron 服务需要 root 权限来读取 /etc/cron.d 并管理任务
         echo '[INFO] Starting cron daemon for scheduled tasks...'
         sudo cron -f
@@ -62,5 +64,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - WATCHTOWER_POLL_INTERVAL=300
-    command: 
-
+    command: ""

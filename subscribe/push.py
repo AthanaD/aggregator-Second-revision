@@ -14,10 +14,6 @@ from http.client import HTTPResponse
 import utils
 from logger import logger
 from urlvalidator import isurl
-# 打印环境变量的值来进行调试
-print("================== SCRIPT DEBUG START ==================")
-print(f"DEBUG: PUSH_TOKEN in script is: {os.getenv('PUSH_TOKEN')}")
-print("================== SCRIPT DEBUG END ====================")
 LOCAL_STORAGE = "local"
 
 

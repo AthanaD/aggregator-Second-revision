@@ -55,7 +55,8 @@ RUN useradd -m appuser && \
 # 1. [预防性修复] 授予二进制文件可执行权限。
 #    这样 Python 脚本 (无论被手动还是被 cron 调用) 都能成功执行它们。
 #    我们使用 find 命令来确保所有匹配的二进制文件都被正确处理。
-RUN find /aggregator/clash -type f -name 'clash-linux-*' -exec chmod +x {} + && \
+RUN chmod +x /aggregator/entrypoint.sh && \
+    find /aggregator/clash -type f -name 'clash-linux-*' -exec chmod +x {} + && \
     find /aggregator/subconverter -type f -name 'subconverter-linux-*' -exec chmod +x {} +
 
 

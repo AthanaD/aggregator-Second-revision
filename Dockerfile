@@ -18,10 +18,7 @@ WORKDIR /aggregator
 
 # 复制依赖和源码
 
-COPY requirements.txt /aggregator
-COPY subscribe /aggregator/subscribe
-COPY clash /aggregator/clash
-COPY subconverter /aggregator/subconverter
+COPY . .
 
 
 # 根据目标架构，删除不需要的二进制文件

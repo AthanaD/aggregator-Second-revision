@@ -36,4 +36,3 @@ echo '[INFO] Starting cron daemon for scheduled tasks...'
 # 使用 exec 会让 cron 进程替换掉当前的 shell 进程，成为容器的主进程(PID 1)，
 # 这是保持容器运行并能正确接收停止信号的最佳实践。
 exec sudo cron -f
-

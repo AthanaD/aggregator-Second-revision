@@ -1,3 +1,19 @@
+# Airport Utils: 终极代理管理与自动化工具集
+
+[
+![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg?style=for-the-badge&logo=python)
+](https://www.python.org/)
+[
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
+](https://opensource.org/licenses/MIT)
+[
+![Status](https://img.shields.io/badge/status-active-success.svg?style=for-the-badge)
+]()
+
+一个强大的、模块化的 Python 脚本集合，专为机场（Proxy Provider）用户和管理者设计，旨在实现从发现、扫描、续订到节点清理、过滤和分析的全流程自动化。
+
+---
+
 ## ✨ 核心功能
 
 本工具集包含多个独立的脚本，每个脚本都专注于一项特定任务：
@@ -24,10 +40,17 @@
 2.  **安装依赖**:
     ```bash
     pip install -r requirements.txt
-    ```
-    主要依赖包括: `PyYAML`, `requests`, `simplejson`, `geoip2`, `pandas`, `openpyxl`, `psutil`, `tqdm`。
 
----
+[
+![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg?style=for-the-badge&logo=python)
+](https://www.python.org/)
+[
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
+](https://opensource.org/licenses/MIT)
+[
+![Status](https://img.shields.io/badge/status-active-success.svg?style=for-the-badge)
+]()
+
 
 ##  Scripts Overview & Usage
 
